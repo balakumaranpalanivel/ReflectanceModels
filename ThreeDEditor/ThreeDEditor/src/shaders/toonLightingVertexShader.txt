@@ -1,0 +1,30 @@
+#version 420 core
+
+in vec3 vertex_position;
+in vec3 vertex_normal;
+
+uniform mat4 view;
+uniform mat4 proj;
+uniform mat4 model;
+
+out VS_OUT
+{
+	vec3 normal;
+	vec3 view;
+} vs_out;
+
+void main()
+{
+	
+	// view space co-ordinates
+	vec4 pos_vs = view * model * vec4(vertex_position, 1.0);
+	
+	// view space normal and position
+	vs_out.normal = mat3(view*model) * vertex_normal;
+
+	// calculate view 
+	vs_out.view = pos_vs.xyz;
+
+	gl_Position = proj * pos_vs;
+
+}

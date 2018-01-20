@@ -1,0 +1,26 @@
+#version 420 core
+
+uniform sampler1D toonTexture;
+
+uniform vec3 light_pos = vec3(30.0, 30.0, 100.0);
+
+// input from vertex shader
+in VS_OUT
+{
+    vec3 normal;
+    vec3 view;
+} fs_in;
+
+// output
+out vec4 frag_colour;
+
+void main()
+{
+	// Normalise the N, L, V vectors
+	vec3 N = normalize(fs_in.normal);
+	vec3 L = normalize(light_pos - fs_in.view);
+
+    // Simple N dot L diffuse lighting
+	float tc = pow(max(0.0, dot(N, L)), 5.0);
+	frag_colour = texture1D(toonTexture, tc) * (tc*0.8 + 0.2);
+}

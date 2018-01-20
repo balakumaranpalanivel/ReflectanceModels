@@ -145,6 +145,8 @@
   <ItemGroup>
     <Text Include="src\shaders\phongLightingFragmentShader.txt" />
     <Text Include="src\shaders\phongLightingVertexShader.txt" />
+    <Text Include="src\shaders\toonLightingFragmentShader.txt" />
+    <Text Include="src\shaders\toonLightingVertexShader.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

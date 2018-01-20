@@ -40,5 +40,11 @@
     <Text Include="src\shaders\phongLightingVertexShader.txt">
       <Filter>Shaders</Filter>
     </Text>
+    <Text Include="src\shaders\toonLightingFragmentShader.txt">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="src\shaders\toonLightingVertexShader.txt">
+      <Filter>Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>

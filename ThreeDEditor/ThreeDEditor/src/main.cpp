@@ -90,8 +90,8 @@ GLuint CompileShaders()
     }
 
 	// Create two shader objects, one for the vertex, and one for the fragment shader
-    AddShader(shaderProgramID, "../ThreeDEditor/src/shaders/phongLightingVertexShader.txt", GL_VERTEX_SHADER);
-    AddShader(shaderProgramID, "../ThreeDEditor/src/shaders/phongLightingFragmentShader.txt", GL_FRAGMENT_SHADER);
+    AddShader(shaderProgramID, "../ThreeDEditor/src/shaders/toonLightingVertexShader.txt", GL_VERTEX_SHADER);
+    AddShader(shaderProgramID, "../ThreeDEditor/src/shaders/toonLightingFragmentShader.txt", GL_FRAGMENT_SHADER);
 
     GLint Success = 0;
     GLchar ErrorLog[1024] = { 0 };
@@ -155,6 +155,7 @@ void generateObjectBufferTeapot () {
 
 #pragma endregion VBO_FUNCTIONS
 
+GLuint toonTexture;
 
 void display(){
 
@@ -163,6 +164,7 @@ void display(){
 	glDepthFunc (GL_LESS); // depth-testing interprets a smaller value as "closer"
 	glClearColor (0.5f, 0.5f, 0.5f, 1.0f);
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glBindTexture(GL_TEXTURE_1D, toonTexture);
 	glUseProgram (shaderProgramID);
 
 
@@ -212,9 +214,30 @@ void updateScene() {
 	glutPostRedisplay();
 }
 
+void CreateToonOneDTexture()
+{
+	static const GLubyte toonTexData[] = 
+	{
+		0x44, 0x00, 0x00, 0x00,
+		0x88, 0x00, 0x00, 0x00,
+		0xCC, 0x00, 0x00, 0x00,
+		0xFF, 0x00, 0x00, 0x00
+	};
+
+	glGenTextures(1, &toonTexture);
+	glBindTexture(GL_TEXTURE_1D, toonTexture);
+	glTexStorage1D(GL_TEXTURE_1D, 1, GL_RGB8, sizeof(toonTexData) / 4);
+	glTexSubImage1D(GL_TEXTURE_1D, 0, 0, sizeof(toonTexData) / 4,
+		GL_RGBA, GL_UNSIGNED_BYTE, toonTexData);
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+}
 
 void init()
 {
+	CreateToonOneDTexture();
+
 	// Create 3 vertices that make up a triangle that fits on the viewport 
 	GLfloat vertices[] = {-1.0f, -1.0f, 0.0f, 1.0,
 			1.0f, -1.0f, 0.0f, 1.0, 
