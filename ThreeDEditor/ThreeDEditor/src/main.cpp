@@ -29,6 +29,7 @@ int width = 800.0;
 int height = 600.0;
 GLuint loc1;
 GLuint loc2;
+mat4 view, persp_proj, model = identity_mat4();
 
 // Shader Functions- click on + to expand
 #pragma region SHADER_FUNCTIONS
@@ -175,9 +176,9 @@ void display(){
 	//The model transform rotates the object by 45 degrees, the view transform sets the camera at -40 on the z-axis, and the perspective projection is setup using Antons method
 
 	// bottom-left
-	mat4 view = translate (identity_mat4 (), vec3 (0.0, 0.0, -40.0));
-	mat4 persp_proj = perspective(45.0, (float)width/(float)height, 0.1, 100.0);
-	mat4 model = rotate_z_deg (identity_mat4 (), 45);
+	view = translate (identity_mat4 (), vec3 (0.0, 0.0, -40.0));
+	persp_proj = perspective(45.0, (float)width/(float)height, 0.1, 100.0);
+	//model = rotate_z_deg (identity_mat4 (), 0);
 
 	//glViewport (0, 0, width / 2, height / 2);
 	glUniformMatrix4fv (proj_mat_location, 1, GL_FALSE, persp_proj.m);
@@ -202,8 +203,10 @@ void updateScene() {
 	double  curr_time = timeGetTime();
 	float  delta = (curr_time - last_time) * 0.001f;
 	if (delta > 0.03f)
-		delta = 0.03f;
-	last_time = curr_time;
+	{
+		model = rotate_y_deg(model, 5);
+		last_time = curr_time;
+	}
 
 	// Draw the next frame
 	glutPostRedisplay();
