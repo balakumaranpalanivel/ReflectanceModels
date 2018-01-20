@@ -143,6 +143,8 @@
     <ClInclude Include="src\teapot.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="src\shaders\minaertLightingFragmentShader.txt" />
+    <Text Include="src\shaders\minaertLightingVertexShader.txt" />
     <Text Include="src\shaders\phongLightingFragmentShader.txt" />
     <Text Include="src\shaders\phongLightingVertexShader.txt" />
     <Text Include="src\shaders\toonLightingFragmentShader.txt" />

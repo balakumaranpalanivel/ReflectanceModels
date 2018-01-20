@@ -1,0 +1,31 @@
+#version 420 core
+
+in vec3 n_eye;
+
+// output
+layout (location = 0) out vec4 frag_colour;
+
+// input from vertex shader
+in VS_OUT
+{
+	vec3 vNormal;
+	vec3 vLightDir;
+	vec3 vViewDir;
+	float vLightDistance2;
+} fs_in;
+
+// Material Properties
+uniform vec3 diffuseColor = vec3(1, 0, 0);
+uniform vec3 specularColor = vec3(1, 1, 1);
+uniform float specularity = 30;
+uniform vec3 lightDiffuseColor = vec3(1, 1, 1);
+uniform float lightDiffusePower = 1.0f;
+uniform vec3 lightSpecularColor = vec3(1, 1, 1);
+uniform float lightSpecularPower = 1.0f;
+
+void main()
+{
+	float NdotH = max(0, dot(fs_in.vNormal, normalize(fs_in.vLightDir + fs_in.vViewDir)));
+
+	frag_colour = vec4(NdotH, 0.0, 0.0, 1.0);
+}

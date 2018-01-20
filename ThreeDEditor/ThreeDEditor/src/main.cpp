@@ -90,8 +90,8 @@ GLuint CompileShaders()
     }
 
 	// Create two shader objects, one for the vertex, and one for the fragment shader
-    AddShader(shaderProgramID, "../ThreeDEditor/src/shaders/toonLightingVertexShader.txt", GL_VERTEX_SHADER);
-    AddShader(shaderProgramID, "../ThreeDEditor/src/shaders/toonLightingFragmentShader.txt", GL_FRAGMENT_SHADER);
+    AddShader(shaderProgramID, "../ThreeDEditor/src/shaders/minaertLightingVertexShader.txt", GL_VERTEX_SHADER);
+    AddShader(shaderProgramID, "../ThreeDEditor/src/shaders/minaertLightingFragmentShader.txt", GL_FRAGMENT_SHADER);
 
     GLint Success = 0;
     GLchar ErrorLog[1024] = { 0 };
@@ -172,13 +172,14 @@ void display(){
 	int matrix_location = glGetUniformLocation (shaderProgramID, "model");
 	int view_mat_location = glGetUniformLocation (shaderProgramID, "view");
 	int proj_mat_location = glGetUniformLocation (shaderProgramID, "proj");
-	
+	int eye_position_location = glGetUniformLocation(shaderProgramID, "eyePosition");;
 
 	//Here is where the code for the viewport lab will go, to get you started I have drawn a t-pot in the bottom left
 	//The model transform rotates the object by 45 degrees, the view transform sets the camera at -40 on the z-axis, and the perspective projection is setup using Antons method
 
 	// bottom-left
-	view = translate (identity_mat4 (), vec3 (0.0, 0.0, -40.0));
+	vec3 eye_position = vec3(0.0, 0.0, -40.0);
+	view = translate (identity_mat4 (), eye_position);
 	persp_proj = perspective(45.0, (float)width/(float)height, 0.1, 100.0);
 	//model = rotate_z_deg (identity_mat4 (), 0);
 
@@ -186,6 +187,8 @@ void display(){
 	glUniformMatrix4fv (proj_mat_location, 1, GL_FALSE, persp_proj.m);
 	glUniformMatrix4fv (view_mat_location, 1, GL_FALSE, view.m);
 	glUniformMatrix4fv (matrix_location, 1, GL_FALSE, model.m);
+	glUniform3fv(eye_position_location, 3, eye_position.v);
+
 	glDrawArrays (GL_TRIANGLES, 0, teapot_vertex_count);
 
 	// bottom-right
