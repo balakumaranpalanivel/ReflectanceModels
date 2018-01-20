@@ -35,5 +35,6 @@ void main()
 	vs_out.V = -P.xyz;
 
 	gl_Position = proj * P;
+
 	//gl_Position =  proj * view * model * vec4 (vertex_position, 1.0);
 }
