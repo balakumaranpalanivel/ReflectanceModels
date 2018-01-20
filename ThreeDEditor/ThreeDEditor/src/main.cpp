@@ -22,7 +22,9 @@
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 using namespace std;
-GLuint shaderProgramID;
+GLuint shaderProgramID_minnaert;
+GLuint shaderProgramID_phong;
+GLuint shaderProgramID_toon;
 
 unsigned int teapot_vao = 0;
 int width = 800.0;
@@ -82,19 +84,19 @@ static void AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum Shad
     glAttachShader(ShaderProgram, ShaderObj);
 }
 
-GLuint CompileShaders()
+GLuint CompileShaders(const char* pVertexShader, const char* pFragmentShader)
 {
 	//Start the process of setting up our shaders by creating a program ID
 	//Note: we will link all the shaders together into this ID
-    shaderProgramID = glCreateProgram();
+    GLuint shaderProgramID = glCreateProgram();
     if (shaderProgramID == 0) {
         fprintf(stderr, "Error creating shader program\n");
         exit(1);
     }
 
 	// Create two shader objects, one for the vertex, and one for the fragment shader
-    AddShader(shaderProgramID, "../ThreeDEditor/src/shaders/minnaertLightingVertexShader.txt", GL_VERTEX_SHADER);
-    AddShader(shaderProgramID, "../ThreeDEditor/src/shaders/minnaertLightingFragmentShader.txt", GL_FRAGMENT_SHADER);
+    AddShader(shaderProgramID, pVertexShader, GL_VERTEX_SHADER);
+    AddShader(shaderProgramID, pFragmentShader, GL_FRAGMENT_SHADER);
 
     GLint Success = 0;
     GLchar ErrorLog[1024] = { 0 };
@@ -131,28 +133,57 @@ GLuint CompileShaders()
 #pragma region VBO_FUNCTIONS
 
 void generateObjectBufferTeapot () {
-	GLuint vp_vbo = 0;
-
-	loc1 = glGetAttribLocation(shaderProgramID, "vertex_position");
-	loc2 = glGetAttribLocation(shaderProgramID, "vertex_normal");
 	
+	GLuint vp_vbo = 0;
 	glGenBuffers (1, &vp_vbo);
 	glBindBuffer (GL_ARRAY_BUFFER, vp_vbo);
 	glBufferData (GL_ARRAY_BUFFER, 3 * teapot_vertex_count * sizeof (float), teapot_vertex_points, GL_STATIC_DRAW);
+
 	GLuint vn_vbo = 0;
 	glGenBuffers (1, &vn_vbo);
 	glBindBuffer (GL_ARRAY_BUFFER, vn_vbo);
 	glBufferData (GL_ARRAY_BUFFER, 3 * teapot_vertex_count * sizeof (float), teapot_normals, GL_STATIC_DRAW);
-  
 	glGenVertexArrays (1, &teapot_vao);
 	glBindVertexArray (teapot_vao);
 
+	//GLuint vp_vbo_toon = 0;
+	//glGenBuffers(1, &vp_vbo_toon);
+	//glBindBuffer(GL_ARRAY_BUFFER, vp_vbo_toon);
+	//glBufferData(GL_ARRAY_BUFFER, 3 * teapot_vertex_count * sizeof(float), teapot_vertex_points, GL_STATIC_DRAW);
+
+	//GLuint vn_vbo_toon = 0;
+	//glGenBuffers(1, &vn_vbo_toon);
+	//glBindBuffer(GL_ARRAY_BUFFER, vn_vbo_toon);
+	//glBufferData(GL_ARRAY_BUFFER, 3 * teapot_vertex_count * sizeof(float), teapot_normals, GL_STATIC_DRAW);
+	//glGenVertexArrays(1, &teapot_vao);
+	//glBindVertexArray(teapot_vao);
+
+	GLuint loc5 = glGetAttribLocation(shaderProgramID_toon, "vertex_position");
+	GLuint loc6 = glGetAttribLocation(shaderProgramID_toon, "vertex_normal");
+	glEnableVertexAttribArray(loc5);
+	glBindBuffer(GL_ARRAY_BUFFER, vp_vbo);
+	glVertexAttribPointer(loc5, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(loc6);
+	glBindBuffer(GL_ARRAY_BUFFER, vn_vbo);
+	glVertexAttribPointer(loc6, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	loc1 = glGetAttribLocation(shaderProgramID_minnaert, "vertex_position");
+	loc2 = glGetAttribLocation(shaderProgramID_minnaert, "vertex_normal");
 	glEnableVertexAttribArray (loc1);
 	glBindBuffer (GL_ARRAY_BUFFER, vp_vbo);
 	glVertexAttribPointer (loc1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray (loc2);
 	glBindBuffer (GL_ARRAY_BUFFER, vn_vbo);
 	glVertexAttribPointer (loc2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	GLuint loc3 = glGetAttribLocation(shaderProgramID_phong, "vertex_position");
+	GLuint loc4 = glGetAttribLocation(shaderProgramID_phong, "vertex_normal");
+	glEnableVertexAttribArray(loc3);
+	glBindBuffer(GL_ARRAY_BUFFER, vp_vbo);
+	glVertexAttribPointer(loc3, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(loc4);
+	glBindBuffer(GL_ARRAY_BUFFER, vn_vbo);
+	glVertexAttribPointer(loc4, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 }
 
 
@@ -169,18 +200,15 @@ void display(){
 	glClearColor (0.5f, 0.5f, 0.5f, 1.0f);
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindTexture(GL_TEXTURE_1D, toonTexture);
-	glUseProgram (shaderProgramID);
-
-
-	//Declare your uniform variables that will be used in your shader
-	int matrix_location = glGetUniformLocation (shaderProgramID, "model");
-	int view_mat_location = glGetUniformLocation (shaderProgramID, "view");
-	int proj_mat_location = glGetUniformLocation (shaderProgramID, "proj");
 
 	//Here is where the code for the viewport lab will go, to get you started I have drawn a t-pot in the bottom left
 	//The model1 transform rotates the object by 45 degrees, the view transform sets the camera at -40 on the z-axis, and the perspective projection is setup using Antons method
 
 	// root
+	glUseProgram(shaderProgramID_minnaert);
+	int matrix_location = glGetUniformLocation(shaderProgramID_minnaert, "model");
+	int view_mat_location = glGetUniformLocation(shaderProgramID_minnaert, "view");
+	int proj_mat_location = glGetUniformLocation(shaderProgramID_minnaert, "proj");
 	vec3 eye_position = vec3(0.0, 0.0, -100.0);
 	view = translate (identity_mat4 (), eye_position);
 	persp_proj = perspective(45.0, (float)width/(float)height, 0.1, 300.0);
@@ -194,6 +222,10 @@ void display(){
 	glDrawArrays (GL_TRIANGLES, 0, teapot_vertex_count);
 
 	// left
+	glUseProgram(shaderProgramID_phong);
+	matrix_location = glGetUniformLocation(shaderProgramID_phong, "model");
+	view_mat_location = glGetUniformLocation(shaderProgramID_phong, "view");
+	proj_mat_location = glGetUniformLocation(shaderProgramID_phong, "proj");
 	mat4 local2 = identity_mat4();
 	local2 = rotate_y_deg(local2, rotate_y);
 	local2 = translate(local2, vec3(-40.0, 0.0, 0.0));
@@ -204,6 +236,10 @@ void display(){
 	glDrawArrays(GL_TRIANGLES, 0, teapot_vertex_count);
 
 	// right
+	glUseProgram(shaderProgramID_toon);
+	matrix_location = glGetUniformLocation(shaderProgramID_toon, "model");
+	view_mat_location = glGetUniformLocation(shaderProgramID_toon, "view");
+	proj_mat_location = glGetUniformLocation(shaderProgramID_toon, "proj");
 	mat4 local3 = identity_mat4();
 	local3 = rotate_y_deg(local3, rotate_y);
 	local3 = translate(local3, vec3(40.0, 0.0, 0.0));
@@ -214,7 +250,6 @@ void display(){
 	glDrawArrays(GL_TRIANGLES, 0, teapot_vertex_count);
 
 	// top-right
-
     glutSwapBuffers();
 }
 
@@ -270,7 +305,14 @@ void init()
 			1.0f, 0.0f, 0.0f, 1.0f,
 			0.0f, 0.0f, 1.0f, 1.0f};
 	// Set up the shaders
-	GLuint shaderProgramID = CompileShaders();
+	shaderProgramID_minnaert = CompileShaders("../ThreeDEditor/src/shaders/minnaertLightingVertexShader.txt",
+		"../ThreeDEditor/src/shaders/minnaertLightingFragmentShader.txt");
+
+	shaderProgramID_phong = CompileShaders("../ThreeDEditor/src/shaders/phongLightingVertexShader.txt",
+		"../ThreeDEditor/src/shaders/phongLightingFragmentShader.txt");
+
+	shaderProgramID_toon = CompileShaders("../ThreeDEditor/src/shaders/toonLightingVertexShader.txt",
+		"../ThreeDEditor/src/shaders/toonLightingFragmentShader.txt");
 
 	// load teapot mesh into a vertex buffer array
 	generateObjectBufferTeapot ();
