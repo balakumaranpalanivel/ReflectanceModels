@@ -34,10 +34,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="src\shaders\simpleFragmentShader.txt">
+    <Text Include="src\shaders\phongLightingFragmentShader.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="src\shaders\simpleVertexShader.txt">
+    <Text Include="src\shaders\phongLightingVertexShader.txt">
       <Filter>Shaders</Filter>
     </Text>
   </ItemGroup>

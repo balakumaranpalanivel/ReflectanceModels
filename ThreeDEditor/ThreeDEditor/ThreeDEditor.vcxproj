@@ -143,8 +143,8 @@
     <ClInclude Include="src\teapot.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="src\shaders\simpleFragmentShader.txt" />
-    <Text Include="src\shaders\simpleVertexShader.txt" />
+    <Text Include="src\shaders\phongLightingFragmentShader.txt" />
+    <Text Include="src\shaders\phongLightingVertexShader.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
