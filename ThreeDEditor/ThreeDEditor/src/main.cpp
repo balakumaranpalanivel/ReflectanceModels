@@ -90,8 +90,8 @@ GLuint CompileShaders()
     }
 
 	// Create two shader objects, one for the vertex, and one for the fragment shader
-    AddShader(shaderProgramID, "../ThreeDEditor/src/shaders/minaertLightingVertexShader.txt", GL_VERTEX_SHADER);
-    AddShader(shaderProgramID, "../ThreeDEditor/src/shaders/minaertLightingFragmentShader.txt", GL_FRAGMENT_SHADER);
+    AddShader(shaderProgramID, "../ThreeDEditor/src/shaders/minnaertLightingVertexShader.txt", GL_VERTEX_SHADER);
+    AddShader(shaderProgramID, "../ThreeDEditor/src/shaders/minnaertLightingFragmentShader.txt", GL_FRAGMENT_SHADER);
 
     GLint Success = 0;
     GLchar ErrorLog[1024] = { 0 };

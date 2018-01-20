@@ -1,0 +1,36 @@
+#version 420 core
+
+in vec3 n_eye;
+
+// output
+layout (location = 0) out vec4 frag_colour;
+
+// input from vertex shader
+in VS_OUT
+{
+	vec3 N;
+	vec3 L;
+	vec3 V;
+} fs_in;
+
+// Material Properties
+uniform vec3 diffuse_albedo = vec3(0.5, 0.2, 0.7);
+uniform vec3 specular_albedo = vec3(0.7);
+uniform float specular_power = 128.0;
+
+uniform float k = 0.75;
+uniform float _minusK = 0.25;
+
+void main()
+{
+	// Normalise the N, L, V vectors
+	vec3 N = normalize(fs_in.N);
+	vec3 L = normalize(fs_in.L);
+	vec3 V = normalize(fs_in.V);
+
+	float minaert1 = pow(max(dot(N, L), 0.0), k+1);
+	float minaert2 = pow(1 - max(dot(N, V), 0.0), 1-k);
+	vec3 minaert = diffuse_albedo * minaert1 * minaert2 ;
+	frag_colour = vec4(minaert, 1.0);
+
+}

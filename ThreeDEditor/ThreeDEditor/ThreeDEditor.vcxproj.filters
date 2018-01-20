@@ -46,10 +46,10 @@
     <Text Include="src\shaders\toonLightingVertexShader.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="src\shaders\minaertLightingVertexShader.txt">
+    <Text Include="src\shaders\minnaertLightingFragmentShader.txt">
       <Filter>Shaders</Filter>
     </Text>
-    <Text Include="src\shaders\minaertLightingFragmentShader.txt">
+    <Text Include="src\shaders\minnaertLightingVertexShader.txt">
       <Filter>Shaders</Filter>
     </Text>
   </ItemGroup>
