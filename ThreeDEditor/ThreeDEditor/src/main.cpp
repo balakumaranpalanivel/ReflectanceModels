@@ -29,7 +29,10 @@ int width = 800.0;
 int height = 600.0;
 GLuint loc1;
 GLuint loc2;
-mat4 view, persp_proj, model = identity_mat4();
+mat4 view, persp_proj, model1 = identity_mat4();
+
+mat4 model2 = translate(identity_mat4(), vec3(40.0, 0.0, 0.0));
+mat4 model3 = translate(identity_mat4(), vec3(-40.0, 0.0, 0.0));
 
 // Shader Functions- click on + to expand
 #pragma region SHADER_FUNCTIONS
@@ -156,6 +159,7 @@ void generateObjectBufferTeapot () {
 #pragma endregion VBO_FUNCTIONS
 
 GLuint toonTexture;
+float rotate_y = 0.0f;
 
 void display(){
 
@@ -172,28 +176,42 @@ void display(){
 	int matrix_location = glGetUniformLocation (shaderProgramID, "model");
 	int view_mat_location = glGetUniformLocation (shaderProgramID, "view");
 	int proj_mat_location = glGetUniformLocation (shaderProgramID, "proj");
-	int eye_position_location = glGetUniformLocation(shaderProgramID, "eyePosition");;
 
 	//Here is where the code for the viewport lab will go, to get you started I have drawn a t-pot in the bottom left
-	//The model transform rotates the object by 45 degrees, the view transform sets the camera at -40 on the z-axis, and the perspective projection is setup using Antons method
+	//The model1 transform rotates the object by 45 degrees, the view transform sets the camera at -40 on the z-axis, and the perspective projection is setup using Antons method
 
-	// bottom-left
-	vec3 eye_position = vec3(0.0, 0.0, -40.0);
+	// root
+	vec3 eye_position = vec3(0.0, 0.0, -100.0);
 	view = translate (identity_mat4 (), eye_position);
-	persp_proj = perspective(45.0, (float)width/(float)height, 0.1, 100.0);
-	//model = rotate_z_deg (identity_mat4 (), 0);
+	persp_proj = perspective(45.0, (float)width/(float)height, 0.1, 300.0);
+	mat4 local1 = identity_mat4();
+	local1 = rotate_y_deg(local1, rotate_y);
 
-	//glViewport (0, 0, width / 2, height / 2);
+	mat4 global1 = identity_mat4();
 	glUniformMatrix4fv (proj_mat_location, 1, GL_FALSE, persp_proj.m);
 	glUniformMatrix4fv (view_mat_location, 1, GL_FALSE, view.m);
-	glUniformMatrix4fv (matrix_location, 1, GL_FALSE, model.m);
-	glUniform3fv(eye_position_location, 3, eye_position.v);
-
+	glUniformMatrix4fv (matrix_location, 1, GL_FALSE, local1.m);
 	glDrawArrays (GL_TRIANGLES, 0, teapot_vertex_count);
 
-	// bottom-right
-		
-	// top-left
+	// left
+	mat4 local2 = identity_mat4();
+	local2 = rotate_y_deg(local2, rotate_y);
+	local2 = translate(local2, vec3(-40.0, 0.0, 0.0));
+	mat4 global2 = global1 * local2;
+	glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, persp_proj.m);
+	glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view.m);
+	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, global2.m);
+	glDrawArrays(GL_TRIANGLES, 0, teapot_vertex_count);
+
+	// right
+	mat4 local3 = identity_mat4();
+	local3 = rotate_y_deg(local3, rotate_y);
+	local3 = translate(local3, vec3(40.0, 0.0, 0.0));
+	mat4 global3 = global1 * local3;
+	glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, persp_proj.m);
+	glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view.m);
+	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, global3.m);
+	glDrawArrays(GL_TRIANGLES, 0, teapot_vertex_count);
 
 	// top-right
 
@@ -209,7 +227,9 @@ void updateScene() {
 	float  delta = (curr_time - last_time) * 0.001f;
 	if (delta > 0.03f)
 	{
-		model = rotate_y_deg(model, 5);
+		rotate_y += 5.0f;
+		model2 = rotate_y_deg(model2, 5);
+		model3 = rotate_y_deg(model3, 5);
 		last_time = curr_time;
 	}
 
