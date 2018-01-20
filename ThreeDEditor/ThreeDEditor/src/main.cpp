@@ -131,7 +131,7 @@ void generateObjectBufferTeapot () {
 	GLuint vp_vbo = 0;
 
 	loc1 = glGetAttribLocation(shaderProgramID, "vertex_position");
-	loc2 = glGetAttribLocation(shaderProgramID, "vertex_normals");
+	loc2 = glGetAttribLocation(shaderProgramID, "vertex_normal");
 	
 	glGenBuffers (1, &vp_vbo);
 	glBindBuffer (GL_ARRAY_BUFFER, vp_vbo);

@@ -1,9 +1,10 @@
-#version 330
+#version 420 core
 
 in vec3 n_eye;
 
 out vec4 frag_colour;
 
-void main(){
+void main()
+{
 	frag_colour = vec4 (n_eye, 1.0);
 }
