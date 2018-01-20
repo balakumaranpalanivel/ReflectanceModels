@@ -31,10 +31,7 @@ int width = 800.0;
 int height = 600.0;
 GLuint loc1;
 GLuint loc2;
-mat4 view, persp_proj, model1 = identity_mat4();
-
-mat4 model2 = translate(identity_mat4(), vec3(40.0, 0.0, 0.0));
-mat4 model3 = translate(identity_mat4(), vec3(-40.0, 0.0, 0.0));
+mat4 view, persp_proj;
 
 // Shader Functions- click on + to expand
 #pragma region SHADER_FUNCTIONS
@@ -231,8 +228,6 @@ void updateScene() {
 	if (delta > 0.03f)
 	{
 		rotate_y += 5.0f;
-		model2 = rotate_y_deg(model2, 5);
-		model3 = rotate_y_deg(model3, 5);
 		last_time = curr_time;
 	}
 
