@@ -146,27 +146,6 @@ void generateObjectBufferTeapot () {
 	glGenVertexArrays (1, &teapot_vao);
 	glBindVertexArray (teapot_vao);
 
-	//GLuint vp_vbo_toon = 0;
-	//glGenBuffers(1, &vp_vbo_toon);
-	//glBindBuffer(GL_ARRAY_BUFFER, vp_vbo_toon);
-	//glBufferData(GL_ARRAY_BUFFER, 3 * teapot_vertex_count * sizeof(float), teapot_vertex_points, GL_STATIC_DRAW);
-
-	//GLuint vn_vbo_toon = 0;
-	//glGenBuffers(1, &vn_vbo_toon);
-	//glBindBuffer(GL_ARRAY_BUFFER, vn_vbo_toon);
-	//glBufferData(GL_ARRAY_BUFFER, 3 * teapot_vertex_count * sizeof(float), teapot_normals, GL_STATIC_DRAW);
-	//glGenVertexArrays(1, &teapot_vao);
-	//glBindVertexArray(teapot_vao);
-
-	GLuint loc5 = glGetAttribLocation(shaderProgramID_toon, "vertex_position");
-	GLuint loc6 = glGetAttribLocation(shaderProgramID_toon, "vertex_normal");
-	glEnableVertexAttribArray(loc5);
-	glBindBuffer(GL_ARRAY_BUFFER, vp_vbo);
-	glVertexAttribPointer(loc5, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(loc6);
-	glBindBuffer(GL_ARRAY_BUFFER, vn_vbo);
-	glVertexAttribPointer(loc6, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
 	loc1 = glGetAttribLocation(shaderProgramID_minnaert, "vertex_position");
 	loc2 = glGetAttribLocation(shaderProgramID_minnaert, "vertex_normal");
 	glEnableVertexAttribArray (loc1);
@@ -175,18 +154,7 @@ void generateObjectBufferTeapot () {
 	glEnableVertexAttribArray (loc2);
 	glBindBuffer (GL_ARRAY_BUFFER, vn_vbo);
 	glVertexAttribPointer (loc2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	GLuint loc3 = glGetAttribLocation(shaderProgramID_phong, "vertex_position");
-	GLuint loc4 = glGetAttribLocation(shaderProgramID_phong, "vertex_normal");
-	glEnableVertexAttribArray(loc3);
-	glBindBuffer(GL_ARRAY_BUFFER, vp_vbo);
-	glVertexAttribPointer(loc3, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(loc4);
-	glBindBuffer(GL_ARRAY_BUFFER, vn_vbo);
-	glVertexAttribPointer(loc4, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 }
-
-
 #pragma endregion VBO_FUNCTIONS
 
 GLuint toonTexture;

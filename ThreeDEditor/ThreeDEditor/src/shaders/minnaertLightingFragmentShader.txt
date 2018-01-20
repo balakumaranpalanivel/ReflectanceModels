@@ -3,7 +3,7 @@
 in vec3 n_eye;
 
 // output
-layout (location = 0) out vec4 frag_colour;
+out vec4 frag_colour;
 
 // input from vertex shader
 in VS_OUT
