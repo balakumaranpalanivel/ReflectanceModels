@@ -18,6 +18,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 
+#define ASSIGNMENT_2
+
 // Macro for indexing vertex buffer
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
@@ -32,6 +34,7 @@ int height = 600.0;
 GLuint loc1;
 GLuint loc2;
 mat4 view, persp_proj;
+float rotate_y = 0.0f;
 
 // Shader Functions- click on + to expand
 #pragma region SHADER_FUNCTIONS
@@ -154,8 +157,9 @@ void generateObjectBufferTeapot () {
 }
 #pragma endregion VBO_FUNCTIONS
 
+
+#ifdef ASSIGNMENT_1
 GLuint toonTexture;
-float rotate_y = 0.0f;
 
 void display(){
 
@@ -217,7 +221,6 @@ void display(){
 	// top-right
     glutSwapBuffers();
 }
-
 
 void updateScene() {	
 
@@ -281,6 +284,114 @@ void init()
 	generateObjectBufferTeapot ();
 	
 }
+
+#endif
+
+#ifdef ASSIGNMENT_2
+
+void display() {
+
+	// tell GL to only draw onto a pixel if the shape is closer to the viewer
+	glEnable(GL_DEPTH_TEST); // enable depth-testing
+	glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//Here is where the code for the viewport lab will go, to get you started I have drawn a t-pot in the bottom left
+	//The model1 transform rotates the object by 45 degrees, the view transform sets the camera at -40 on the z-axis, and the perspective projection is setup using Antons method
+
+	// root
+	glUseProgram(shaderProgramID_minnaert);
+	int matrix_location = glGetUniformLocation(shaderProgramID_minnaert, "model");
+	int view_mat_location = glGetUniformLocation(shaderProgramID_minnaert, "view");
+	int proj_mat_location = glGetUniformLocation(shaderProgramID_minnaert, "proj");
+	vec3 eye_position = vec3(0.0, 0.0, -100.0);
+	view = translate(identity_mat4(), eye_position);
+	persp_proj = perspective(45.0, (float)width / (float)height, 0.1, 300.0);
+	mat4 local1 = identity_mat4();
+	local1 = rotate_y_deg(local1, rotate_y);
+
+	mat4 global1 = identity_mat4();
+	glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, persp_proj.m);
+	glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view.m);
+	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, local1.m);
+	glDrawArrays(GL_TRIANGLES, 0, teapot_vertex_count);
+
+	// left
+	glUseProgram(shaderProgramID_phong);
+	matrix_location = glGetUniformLocation(shaderProgramID_phong, "model");
+	view_mat_location = glGetUniformLocation(shaderProgramID_phong, "view");
+	proj_mat_location = glGetUniformLocation(shaderProgramID_phong, "proj");
+	mat4 local2 = identity_mat4();
+	local2 = rotate_y_deg(local2, rotate_y);
+	local2 = translate(local2, vec3(-40.0, 0.0, 0.0));
+	mat4 global2 = global1 * local2;
+	glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, persp_proj.m);
+	glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view.m);
+	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, global2.m);
+	glDrawArrays(GL_TRIANGLES, 0, teapot_vertex_count);
+
+	// right
+	glUseProgram(shaderProgramID_toon);
+	matrix_location = glGetUniformLocation(shaderProgramID_toon, "model");
+	view_mat_location = glGetUniformLocation(shaderProgramID_toon, "view");
+	proj_mat_location = glGetUniformLocation(shaderProgramID_toon, "proj");
+	mat4 local3 = identity_mat4();
+	local3 = rotate_y_deg(local3, rotate_y);
+	local3 = translate(local3, vec3(40.0, 0.0, 0.0));
+	mat4 global3 = global1 * local3;
+	glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, persp_proj.m);
+	glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view.m);
+	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, global3.m);
+	glDrawArrays(GL_TRIANGLES, 0, teapot_vertex_count);
+
+	// top-right
+	glutSwapBuffers();
+}
+
+void updateScene() {
+
+	// Wait until at least 16ms passed since start of last frame (Effectively caps framerate at ~60fps)
+	static double  last_time = 0;
+	double  curr_time = timeGetTime();
+	float  delta = (curr_time - last_time) * 0.001f;
+	if (delta > 0.03f)
+	{
+		rotate_y += 5.0f;
+		last_time = curr_time;
+	}
+
+	// Draw the next frame
+	glutPostRedisplay();
+}
+
+void init()
+{
+
+	// Create 3 vertices that make up a triangle that fits on the viewport 
+	GLfloat vertices[] = { -1.0f, -1.0f, 0.0f, 1.0,
+		1.0f, -1.0f, 0.0f, 1.0,
+		0.0f, 1.0f, 0.0f, 1.0 };
+	// Create a color array that identfies the colors of each vertex (format R, G, B, A)
+	GLfloat colors[] = { 0.0f, 1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f, 1.0f };
+	// Set up the shaders
+	shaderProgramID_minnaert = CompileShaders("../ThreeDEditor/src/shaders/minnaertLightingVertexShader.txt",
+		"../ThreeDEditor/src/shaders/minnaertLightingFragmentShader.txt");
+
+	shaderProgramID_phong = CompileShaders("../ThreeDEditor/src/shaders/phongLightingVertexShader.txt",
+		"../ThreeDEditor/src/shaders/phongLightingFragmentShader.txt");
+
+	shaderProgramID_toon = CompileShaders("../ThreeDEditor/src/shaders/toonLightingVertexShader.txt",
+		"../ThreeDEditor/src/shaders/toonLightingFragmentShader.txt");
+
+	// load teapot mesh into a vertex buffer array
+	generateObjectBufferTeapot();
+
+}
+
+#endif
 
 int main(int argc, char** argv){
 
