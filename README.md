@@ -1,3 +1,13 @@
-ThreeDEditor
+# Reflectance Models
 
-Copy and paste the freeglut and glew dlls from dependencies folder into Debug/Release build folders as required
+This project implements few simple shading techniques.
+
+## Features
+
+* Phong Shading model
+* Minnaert Shading model
+* Toon Shading model
+
+### Demo
+
+* Demo - https://youtu.be/GkttBZjZhqI
